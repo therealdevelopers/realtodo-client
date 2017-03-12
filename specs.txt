@@ -1,0 +1,14 @@
+x (A) 2017-01-01 task-1 Update #todo.js readme file! :: And don't forget the st.
+
+Task header
+  x          - Status. Use "x" for done tasks and blank for other.
+  (A)        - Priority. From (A) to (F) or without it.
+  2017-01-01 - Creation Date, YYYY-MM-DD. Will be inserted automaticaly.
+  task-1     - ID, task-N (N is decimal number). Will be inserted automaticaly.
+Task body
+  #todo.js   - Tag. There are four types of tags:
+                 @context    -
+                 +project    -
+                 ~dependency -
+                 #hashtag    -
+  ::         - Line Break/Rest of task description.
