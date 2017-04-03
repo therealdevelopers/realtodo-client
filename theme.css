@@ -1,0 +1,17 @@
+@charset "utf-8";
+
+.context {
+  color: orange;
+}
+
+.project {
+  color: magenta;
+}
+
+.dependency {
+  color: SpringGreen;
+}
+
+.hashtag {
+  color: cyan;
+}

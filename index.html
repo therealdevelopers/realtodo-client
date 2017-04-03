@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>realtodo~</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="theme.css" />
+    <script async="true" defer="true" src="engine.js"></script>
+    <script async="true" defer="true" src="test.js"></script>
+  </head>
+  <body>
+    <form id="baseform">
+      <input name="import" type="file" hidden="true" />
+      <header id="header"></header>
+      <main id="main">
+        <fieldset name="inputs">
+          <input name="command" type="button" value="/" />
+          <input name="task" type="text" autofocus="true" autocomplete="off" placeholder="Enter a new task here" />
+          <input name="x-submit" type="submit" value="&check;" />
+          <input hidden type="file" id="test" />
+        </fieldset>
+        <fieldset name="tags">
+        </fieldset>
+        <output name="tasks">
+          <template id="tasktemplate">
+            <article>
+              <header>
+                <button value="done">done!</button><button value="edit">edit</button><button value="less">less</button><button value="remove">remove</button>
+              </header>
+              <section></section>
+              <textarea></textarea>
+              <footer></footer>
+            </article>
+          </template>
+        </output>
+      </main>
+      <footer id="footer">
+        <p>
+          realtodo JavaScript <a href="">client</a> by <a href="">eljee8</a> and Ruby <a href="">server</a> by <a href="">Carbon_beard</a> (2017)
+        </p>
+        <p>
+          original todo.txt <a href="https://todotxt.com/">idea</a> as well as <a href="">command line client</a> belongs to <a href="https://ginatrapani.org/">Gina Trapani</a>
+        </p>
+      </footer>
+    </form>
+  </body>
+</html>
