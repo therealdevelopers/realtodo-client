@@ -1,15 +1,14 @@
-"use strict";
-
 ////////////////////////////////////////////////////////////////////////////////
 /*/ Engine Global Constants ////////////////////////////////////////////// X /*/
 ////////////////////////////////////////////////////////////////////////////////
-const ENGINE_NAME                    = "realtodo.js";
-const ENGINE_VERSION                 = "1.0.0";
+const ENGINE_NAME             = "realtodo.js";
+const ENGINE_VERSION          = "1.0.0";
 
 const SESSION_START_TIMESTAMP = new Date().toISOString();
 
 const ETC_HEADER_CONTENT_TYPE = "data:text/plain;charset=utf-8";
 
+const SERVER_DEFAULT_PORT = 5461;
 
 // error_no-such-command
 // error_id-not-specified
@@ -18,13 +17,25 @@ const ETC_HEADER_CONTENT_TYPE = "data:text/plain;charset=utf-8";
 // success_authorized-auto
 // confirm_clear-storage
 // confirm_import-tasks
+// confirm_authorize
 // error_default-title
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/ Global Initializer /////////////////////////////////////////////////// X /*/
 ////////////////////////////////////////////////////////////////////////////////
-var Initializer = {
-  init() {
+
+var Module = (function () {
+  "use strict";
+  let module = {};
+  return module;
+}());
+
+
+var Initializer = (function () {
+  "use strict";
+  let module = {};
+
+  module.init = function() {
     let pm0 = performance.now();
     
     Storage.init();
@@ -32,20 +43,22 @@ var Initializer = {
     GUI.init();
     
     let pm1 = performance.now();
-    
-    console.log("Took %dms.", Math.round(pm1 - pm0));
-  }
-};
+    console.log("This all took " + Math.round(pm1 - pm0) + "ms.");
+  };
+
+  return module;
+}());
 
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/ Shell //////////////////////////////////////////////////////////////// X /*/
 ////////////////////////////////////////////////////////////////////////////////
-var Shell = {
+var Shell = (function () {
+  "use strict";
+  let module = {};
   
-  tokens: ["/", "."],
-  
-  commands: {
+  let tokens = ["/", "."];
+  let commands = {
     "add": {
       manual: "Adds a new task with text specified.",
       tokens: ["add", "a"]
@@ -67,7 +80,7 @@ var Shell = {
       tokens: ["more"]
     },
     "auth": {
-      manual: "",
+      manual: "Authorize at server as user@server:port. ",
       tokens: ["auth"]
     },
     "push": {
@@ -78,21 +91,35 @@ var Shell = {
       manual: "",
       tokens: ["pull"]
     }
-  },
+  };
   
-  manuals: {
+  let manuals = {
     "add": "",
-  },
+  };
   
-  init() {
+  function parseId(string) {
+    let id = Number.parseInt(string);
+    
+    if (Number.isInteger(id) && (Storage.index(id) > f-1)) {
+      return id;
+    } else {
+      return null;
+    }
+  }
+  
+  module.init = function() {
+    
+    if (this.token && this.server) {
+      GUI.toast(ENGINE_NAME, "Automaticaly authorized as " + this.token + "@" + this.server + ".");}
+    
     return 0;
-  },
+  };
   
-  parse(line) {
+  module.parse = function(line) {
     if (!/^\s*$/.test(line)) {
       line = line.trim().replace(/\s\s+/g, " ");
 
-      if (this.tokens.includes(line[0])) {
+      if (tokens.includes(line[0])) {
         let args = line.slice(1).split(" "),
             command = this.find(["commands", args[0]]);
             
@@ -105,19 +132,9 @@ var Shell = {
         this.add([line]);
       }
     }
-  },
+  };
   
-  parseId(string) {
-    let id = Number.parseInt(string);
-    
-    if (Number.isInteger(id) && (Storage.index(id) > f-1)) {
-      return id;
-    } else {
-      return null;
-    }
-  },
-  
-  find(args) {
+  module.find = function(args) {
     let type = args[0],
         name = args[1];
         
@@ -130,56 +147,56 @@ var Shell = {
     }
     
     return null;
-  },
+  };
   
-  list(args) {
+  module.list = function(args) {
     
-  },
+  };
   
-  edit(args) {
+  module.edit= function(args) {
     if (this.parseId(args[1])) {
       GUI.edit(args[1]);
     } else {
       GUI.toast("Error", "Please enter a correct number first to use task.");
     }
-  },
+  };
   
-  more(args) {
+  module.more = function(args) {
     if (this.parseId(args[1])) {
       GUI.more(args[1]);
     } else {
       GUI.toast("Error", "Please enter correct number first to use task."); 
     }
-  },
+  };
   
-  less(args) {
+  module.less = function(args) {
     console.log(args);
     if (this.parseId(args[1])) {
       GUI.less(args[1]);
     } else {
       GUI.toast("Error", "Please enter correct number first to use task."); 
     }
-  },
+  };
   
-  help(args) {
+  module.help = function(args) {
     
-  },
+  };
   
-  add(args) {
+  module.add = function(args) {
     let task = Task.parse(args.join(""));
     
     Storage.add(task);
     GUI.add(task);
     
     GUI.toast(ENGINE_NAME, "New task added: " + task.body.toString() + ".");
-  },
+  };
   
-  pop(args) {
+  module.pop = function(args) {
     Storage.pop();
     GUI.pop();
-  }, 
+  }; 
   
-  insert(args) {
+  module.insert = function(args) {
     let id, task;
     
     if (this.parseId(args[1])) {
@@ -192,9 +209,9 @@ var Shell = {
       
     Storage.insert(id, task);
     GUI.insert(id, task);
-  },
+  };
   
-  modify(args) {
+  module.modify = function(args) {
     if (this.parseId(args[1])) {
       let id = args[1]; 
       Storage.modify();
@@ -202,146 +219,161 @@ var Shell = {
     } else {
      
     }
-  },
+  };
     
-  remove(args) {
+  module.remove = function(args) {
     if (this.parseId(args[1])) {
       
     } else {
       
     }
-  },
+  };
   
-  done(args) {
+  module.done = function(args) {
     if (this.parseId(args[1])) {
       
     } else {
       
     }    
-  },
+  };
   
-  undone(args) {
+  module.undone = function(args) {
     if (this.parseId(args[1])) {
       
     } else {
       
     }    
-  },
+  };
   
-  priority(args) {
+  module.priority = function(args) {
     if (this.parseId(args[1])) {
       
     } else {
       
     }    
-  },
+  };
   
-  date(args) {
+  module.date = function(args) {
     if (this.parseId(args[1])) {
       
     } else {
       
     }    
-  },
+  };
   
-  body(args) {
+  module.body = function(args) {
     if (this.parseId(args[1])) {
       
     } else {
       
     }    
-  },
+  };
   
-  clear(args) {
+  module.clear = function(args) {
     if (GUI.confirm("Are you sure you want to clear all storage with all the tasks and credentials stored?\r\n\r\nThis operation can't be undone.")) {
       Storage.clear();
       GUI.clear();
       GUI.toast(ENGINE_NAME, "Storage cleared.");
     }
-  },
+  };
   
-  auth(args) {
-    let rx = /\w+@\w+?(:\d+|)/;
+  module.auth = function(args) {
+    const DEFAULT_SERVER = "localhost";
+    const DEFAULT_PORT = "12345";
     
-    if (GUI.confirm("Authorize as " + token + "@" + server + "?")) {
-      Storage.auth(token, server);
-      GUI.toast(ENGINE_NAME, "Manually authorized as " + token + "@" + server + ".");
+    let rx = /^[^@:]+(@[^@:]+(:\d+|)|)$/,
+        input = args[1].split("@"),
+        token = input[0],
+        server = input[1] || DEFAULT_SERVER + ":" + DEFAULT_PORT;
+    
+    if (rx.test(args[1])) {
+      if (GUI.confirm("Authorize as " + token + "@" + server + "?")) {
+        GUI.toast(ENGINE_NAME, "Manually authorised as " + token + "@" + server + ".");
+        Storage.auth(token, server);
+      }
+    } else {
+      GUI.toast();
     }
-  },
+  };
   
-  push(args) {
+  module.push = function(args) {
     
-  },
+  };
   
-  pull(args) {
+  module.pull = function(args) {
     // might be dangerous, require confirmation
-  },
+  };
   
-  importTasks(args) {
+  module.importTasks = function(args) {
     let message = "Are you sure you want to import new tasks?\n\n" + 
       "This operation will replace all the existing tasks and CAN NOT be undone.";
     
     if (GUI.confirm(message)) {
       Storage.importTasks(GUI.importTasks());
     }
-  },
+  };
   
-  exportTasks(args) {
+  module.exportTasks = function(args) {
     GUI.exportTasks(Storage.exportTasks());
-  },
-};
+  };
+
+  return module;
+}());
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/ GUI ////////////////////////////////////////////////////////////////// X /*/
 ////////////////////////////////////////////////////////////////////////////////
-var GUI = {
-  toastTimeOutInterval: 0,
+var GUI = (function () {
+  "use strict";
+  let module = {};
   
-  cssClassNames: {
+  let toastTimeOutInterval = 0;
+  let cssClassNames = {
     editorShown: "editor-shown",
     controlsShown: "controls-shown",
     taskDone: "task-done"
-  },
+  };
   
-  buttonValues: {
+  let buttonValues = {
     done:   "done",
     undone: "undone",
     edit:   "edit",
     save:   "save",
     less:   "less",
     remove: "remove",
-  },
+  };
   
-  baseform: document.getElementById("baseform"),
+  let baseform = document.getElementById("baseform");
   
-  inputs: {
-    command: this.baseform.elements["command"],
-    task:    this.baseform.elements["task"],
-    submit:  this.baseform.elements["x-submit"],
-    file:    this.baseform.elements["file"],
-    import:  this.baseform.elements["import"],
-  },
+  let inputs = {
+    command: baseform.elements["command"],
+    task:    baseform.elements["task"],
+    submit:  baseform.elements["x-submit"],
+    file:    baseform.elements["file"],
+    import:  baseform.elements["import"],
+  };
   
-  outputs: {
-    tasks:   this.baseform.elements["tasks"]
-  },
+  let outputs = {
+    tasks:   baseform.elements["tasks"]
+  };
     
-  templates: {
+  let templates = {
     task:  document.getElementById("tasktemplate").content.querySelector("article")
-  },
+  };
   
-  init() {
+  module.init = function() {
     baseform.addEventListener("submit", function(event) {
       event.preventDefault();
       
-      Shell.parse(GUI.inputs.task.value);
-      GUI.inputs.task.value = "";
+      Shell.parse(inputs.task.value);
+      inputs.task.value = "";
       
       return false;
     });
     
-    this.inputs.command.addEventListener("click", function() {
+    inputs.command.addEventListener("click", function() {
       let value = GUI.inputs.task.value;
 
       if (value[0] === "/" && value.length > 1) {
@@ -367,103 +399,102 @@ var GUI = {
     }
     
     return 0;
-  },
+  };
   
-  alert(message) {
+  module.alert = function(message) {
     alert(message);
-  },
+  };
   
-  confirm(message) {
+  module.confirm = function(message) {
     return confirm(message);
-  },
+  };
   
-  prompt(message, prompt) {
+  module.prompt = function(message, prompt) {
     return prompt(message, prompt);
-  },
+  };
   
-  list(regex) {
+  module.list = function(regex) {
     
-  },
+  };
   
-  edit(id) {
+  module.edit = function(id) {
     // let taskElement = document.getElementById("task-" + id);
     // taskElement.querySelector("section").click();
     // taskElement.querySelector("button[value='edit']").click();
     // taskElement.querySelector("textarea").focus();
-  },
+  };
   
-  more(id) {
+  module.more = function(id) {
     
-  },
+  };
   
-  less(id) {
+  module.less = function(id) {
     
-  },
+  };
   
-  toast(title, body) {
-    
+  module.toast = function(title, body) {
     Notification.requestPermission(function (permission) {
       if (permission === "granted") {
         new Notification(title, {body: body});
       }
     });
-  },
+  };
   
-  add(task) {
-    let message = this.templates.task.cloneNode(true);
+  module.add = function(task) {
+    let message = templates.task.cloneNode(true);
         
     message.id = "task-" + task.id;
         
     message.querySelector("section").innerHTML = task.toHTML();
     message.querySelector("textarea").textContent = task.toString();
     
-    this.outputs.tasks.insertBefore(message, this.outputs.tasks.children[0]);
-  },
+    outputs.tasks.insertBefore(message, outputs.tasks.children[0]);
+  };
   
-  pop(count) {
+  module.pop = function(count) {
     
-  }, 
+  }; 
   
-  insert(id, task) {
+  module.insert = function(id, task) {
     
-  },
+  };
   
-  modify(id, task) {
+  module.modify = function(id, task) {
     
-  },
+  };
     
-  remove(id) {
+  module.remove = function(id) {
     
-  },
+  };
   
-  done(id) {
+  module.done = function(id) {
     
-  },
+  };
   
-  undone(id) {
+  module.undone = function(id) {
     
-  },
+  };
   
-  priority(args) {
+  module.priority = function(args) {
     
-  },
+  };
   
-  date(args) {
+  module.date = function(args) {
     
-  },
+  };
   
-  body(args) {
+  module.body = function(args) {
     
-  },
+  };
   
-  clear() {
+  module.clear = function() {
     this.outputs.tasks.querySelectorAll("article").forEach(function(task) {
       task.remove()
     });
 
-  },
+  };
   
-  importTasks() {
+  module.importTasks = function() {
     let result = [];
   
     this.inputs.import.click();
@@ -482,9 +513,9 @@ var GUI = {
     }
     
     return false;
-  },
+  };
   
-  exportTasks(tasks) {
+  module.exportTasks = function(tasks) {
     let anchor = document.createElement("a");
 
     anchor.target = "_blank";
@@ -496,13 +527,26 @@ var GUI = {
     document.body.removeChild(anchor);
 
     GUI.toast(ENGINE_NAME, "Export over.");
-  },
-};
+  };
+  
+  return module;
+}());
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/ Storage //////////////////////////////////////////////////////////////////*/
 ////////////////////////////////////////////////////////////////////////////////
+var Storage = (function () {
+  "use strict";
+  let module = {};
+  
+  
+  
+  return module;
+}());
+
+
 var Storage = {
   get token() {
     return ClientStorage.token;
@@ -531,10 +575,6 @@ var Storage = {
   init() {
     ClientStorage.init();
     ServerStorage.init();
-    
-    if (this.token && this.server) {
-      GUI.toast(ENGINE_NAME, "Automaticaly authorized as " + this.token + "@" + this.server + ".");
-    }
     
     return 0;
   },
@@ -765,7 +805,7 @@ var ServerStorage = {
   pull(index) {
     let x = new XMLHttpRequest();
     x.addEventListener("load", function() {
-      console.log(this.responseText);
+      
     });
     
     x.open("GET", this.server + "/pull");

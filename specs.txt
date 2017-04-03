@@ -1,3 +1,24 @@
+Task:
+- Head
+  - Status. Currently is *done* as `x` character or *not done yet* as blank character;
+  - Priority. Specified as alphabet characters in bracets, from `A` to `F` depending of level; 
+  - Date as in ISO standard: YYYY-MM-DD.
+  - ID. 
+- Body
+  - Text. 
+  - Special markup characters:
+    - Line breaks `::`. Literally breaks a line and can be used for dividing tasksummary and the rest. 
+    - Tags
+
+
+
+
+add
+pop
+in
+
+
+
 x (A) 2017-01-01 task-1 Update #todo.js readme file! :: And don't forget the st.
 
 Task header
